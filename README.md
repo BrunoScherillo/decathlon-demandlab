@@ -16,13 +16,13 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Il browser aprirà la dashboard (di norma http://localhost:8501). Se occorre rigenerare i dati:
+Il browser aprirà la dashboard (di norma http://localhost:8501). Se occorre rigenerare i dati  (file CSV salvato in "data"):
 
 ```bash
 python generate_data.py
 ```
 
-Per verificare:
+Per eseguire dei test (recuperati da tests/test_model):
 
 ```bash
 python -m pytest -q
@@ -35,8 +35,6 @@ python -m pytest -q
 - `generate_data.py`: dati riproducibili (seed=2026), quattro articoli × 48 mesi.
 - `data/domanda_sintetica.csv`: 192 osservazioni mensili.
 - `tests/test_model.py`: test di funzionamento.
-- `RELAZIONE.md`: relazione, metodologie, interpretazione, limiti e bibliografia.
-- `PIANO_DI_LAVORO.md`: fasi, obiettivi, tempi, risorse e criteri di verifica.
 
 ## Come usare la dashboard
 
@@ -47,10 +45,6 @@ python -m pytest -q
 5. Scarica il CSV delle previsioni per discutere un caso concreto nella relazione.
 
 **Nota metodologica:** confronto di previsione: backtest rolling-origin sui 12 mesi finali, senza usare dati futuri per stimare i modelli. Selezione per MAE, RMSE e sMAPE come supporto. Le scorte sono quantità di pianificazione illustrative: non costituiscono una simulazione di inventario operativa e non vanno sommate indiscriminatamente.
-
-## Pubblicazione del repository
-
-Crea un nuovo repository GitHub chiamato `decathlon-demandlab` e carica questa cartella (evita la directory `.venv`). Poi aggiungi alla relazione il link effettivo, per esempio `https://github.com/TUO-USERNAME/decathlon-demandlab`. Nessun repository viene pubblicato automaticamente.
 
 ## Fonti aziendali
 
