@@ -1,0 +1,193 @@
+mese,articolo,domanda_unita,tipo_domanda
+2022-01-01,Pallone calcio,168,stazionaria
+2022-02-01,Pallone calcio,187,stazionaria
+2022-03-01,Pallone calcio,158,stazionaria
+2022-04-01,Pallone calcio,208,stazionaria
+2022-05-01,Pallone calcio,196,stazionaria
+2022-06-01,Pallone calcio,179,stazionaria
+2022-07-01,Pallone calcio,175,stazionaria
+2022-08-01,Pallone calcio,181,stazionaria
+2022-09-01,Pallone calcio,170,stazionaria
+2022-10-01,Pallone calcio,170,stazionaria
+2022-11-01,Pallone calcio,185,stazionaria
+2022-12-01,Pallone calcio,184,stazionaria
+2023-01-01,Pallone calcio,179,stazionaria
+2023-02-01,Pallone calcio,182,stazionaria
+2023-03-01,Pallone calcio,188,stazionaria
+2023-04-01,Pallone calcio,178,stazionaria
+2023-05-01,Pallone calcio,180,stazionaria
+2023-06-01,Pallone calcio,192,stazionaria
+2023-07-01,Pallone calcio,178,stazionaria
+2023-08-01,Pallone calcio,156,stazionaria
+2023-09-01,Pallone calcio,167,stazionaria
+2023-10-01,Pallone calcio,183,stazionaria
+2023-11-01,Pallone calcio,170,stazionaria
+2023-12-01,Pallone calcio,174,stazionaria
+2024-01-01,Pallone calcio,190,stazionaria
+2024-02-01,Pallone calcio,211,stazionaria
+2024-03-01,Pallone calcio,175,stazionaria
+2024-04-01,Pallone calcio,207,stazionaria
+2024-05-01,Pallone calcio,168,stazionaria
+2024-06-01,Pallone calcio,186,stazionaria
+2024-07-01,Pallone calcio,162,stazionaria
+2024-08-01,Pallone calcio,197,stazionaria
+2024-09-01,Pallone calcio,186,stazionaria
+2024-10-01,Pallone calcio,190,stazionaria
+2024-11-01,Pallone calcio,161,stazionaria
+2024-12-01,Pallone calcio,187,stazionaria
+2025-01-01,Pallone calcio,172,stazionaria
+2025-02-01,Pallone calcio,177,stazionaria
+2025-03-01,Pallone calcio,194,stazionaria
+2025-04-01,Pallone calcio,200,stazionaria
+2025-05-01,Pallone calcio,189,stazionaria
+2025-06-01,Pallone calcio,174,stazionaria
+2025-07-01,Pallone calcio,168,stazionaria
+2025-08-01,Pallone calcio,198,stazionaria
+2025-09-01,Pallone calcio,183,stazionaria
+2025-10-01,Pallone calcio,184,stazionaria
+2025-11-01,Pallone calcio,207,stazionaria
+2025-12-01,Pallone calcio,164,stazionaria
+2022-01-01,Tappetino fitness,103,trend crescente
+2022-02-01,Tappetino fitness,113,trend crescente
+2022-03-01,Tappetino fitness,99,trend crescente
+2022-04-01,Tappetino fitness,93,trend crescente
+2022-05-01,Tappetino fitness,80,trend crescente
+2022-06-01,Tappetino fitness,101,trend crescente
+2022-07-01,Tappetino fitness,89,trend crescente
+2022-08-01,Tappetino fitness,96,trend crescente
+2022-09-01,Tappetino fitness,97,trend crescente
+2022-10-01,Tappetino fitness,106,trend crescente
+2022-11-01,Tappetino fitness,120,trend crescente
+2022-12-01,Tappetino fitness,103,trend crescente
+2023-01-01,Tappetino fitness,101,trend crescente
+2023-02-01,Tappetino fitness,104,trend crescente
+2023-03-01,Tappetino fitness,108,trend crescente
+2023-04-01,Tappetino fitness,106,trend crescente
+2023-05-01,Tappetino fitness,115,trend crescente
+2023-06-01,Tappetino fitness,142,trend crescente
+2023-07-01,Tappetino fitness,124,trend crescente
+2023-08-01,Tappetino fitness,137,trend crescente
+2023-09-01,Tappetino fitness,124,trend crescente
+2023-10-01,Tappetino fitness,142,trend crescente
+2023-11-01,Tappetino fitness,124,trend crescente
+2023-12-01,Tappetino fitness,139,trend crescente
+2024-01-01,Tappetino fitness,174,trend crescente
+2024-02-01,Tappetino fitness,146,trend crescente
+2024-03-01,Tappetino fitness,168,trend crescente
+2024-04-01,Tappetino fitness,164,trend crescente
+2024-05-01,Tappetino fitness,160,trend crescente
+2024-06-01,Tappetino fitness,158,trend crescente
+2024-07-01,Tappetino fitness,182,trend crescente
+2024-08-01,Tappetino fitness,169,trend crescente
+2024-09-01,Tappetino fitness,191,trend crescente
+2024-10-01,Tappetino fitness,169,trend crescente
+2024-11-01,Tappetino fitness,181,trend crescente
+2024-12-01,Tappetino fitness,189,trend crescente
+2025-01-01,Tappetino fitness,191,trend crescente
+2025-02-01,Tappetino fitness,176,trend crescente
+2025-03-01,Tappetino fitness,185,trend crescente
+2025-04-01,Tappetino fitness,194,trend crescente
+2025-05-01,Tappetino fitness,190,trend crescente
+2025-06-01,Tappetino fitness,210,trend crescente
+2025-07-01,Tappetino fitness,212,trend crescente
+2025-08-01,Tappetino fitness,187,trend crescente
+2025-09-01,Tappetino fitness,192,trend crescente
+2025-10-01,Tappetino fitness,200,trend crescente
+2025-11-01,Tappetino fitness,219,trend crescente
+2025-12-01,Tappetino fitness,243,trend crescente
+2022-01-01,Tenda campeggio,50,stagionale estiva
+2022-02-01,Tenda campeggio,59,stagionale estiva
+2022-03-01,Tenda campeggio,46,stagionale estiva
+2022-04-01,Tenda campeggio,66,stagionale estiva
+2022-05-01,Tenda campeggio,104,stagionale estiva
+2022-06-01,Tenda campeggio,199,stagionale estiva
+2022-07-01,Tenda campeggio,247,stagionale estiva
+2022-08-01,Tenda campeggio,194,stagionale estiva
+2022-09-01,Tenda campeggio,147,stagionale estiva
+2022-10-01,Tenda campeggio,82,stagionale estiva
+2022-11-01,Tenda campeggio,60,stagionale estiva
+2022-12-01,Tenda campeggio,62,stagionale estiva
+2023-01-01,Tenda campeggio,61,stagionale estiva
+2023-02-01,Tenda campeggio,71,stagionale estiva
+2023-03-01,Tenda campeggio,50,stagionale estiva
+2023-04-01,Tenda campeggio,50,stagionale estiva
+2023-05-01,Tenda campeggio,130,stagionale estiva
+2023-06-01,Tenda campeggio,191,stagionale estiva
+2023-07-01,Tenda campeggio,235,stagionale estiva
+2023-08-01,Tenda campeggio,221,stagionale estiva
+2023-09-01,Tenda campeggio,115,stagionale estiva
+2023-10-01,Tenda campeggio,89,stagionale estiva
+2023-11-01,Tenda campeggio,72,stagionale estiva
+2023-12-01,Tenda campeggio,62,stagionale estiva
+2024-01-01,Tenda campeggio,70,stagionale estiva
+2024-02-01,Tenda campeggio,50,stagionale estiva
+2024-03-01,Tenda campeggio,51,stagionale estiva
+2024-04-01,Tenda campeggio,93,stagionale estiva
+2024-05-01,Tenda campeggio,138,stagionale estiva
+2024-06-01,Tenda campeggio,217,stagionale estiva
+2024-07-01,Tenda campeggio,238,stagionale estiva
+2024-08-01,Tenda campeggio,220,stagionale estiva
+2024-09-01,Tenda campeggio,125,stagionale estiva
+2024-10-01,Tenda campeggio,66,stagionale estiva
+2024-11-01,Tenda campeggio,34,stagionale estiva
+2024-12-01,Tenda campeggio,41,stagionale estiva
+2025-01-01,Tenda campeggio,66,stagionale estiva
+2025-02-01,Tenda campeggio,37,stagionale estiva
+2025-03-01,Tenda campeggio,54,stagionale estiva
+2025-04-01,Tenda campeggio,107,stagionale estiva
+2025-05-01,Tenda campeggio,140,stagionale estiva
+2025-06-01,Tenda campeggio,222,stagionale estiva
+2025-07-01,Tenda campeggio,222,stagionale estiva
+2025-08-01,Tenda campeggio,167,stagionale estiva
+2025-09-01,Tenda campeggio,149,stagionale estiva
+2025-10-01,Tenda campeggio,61,stagionale estiva
+2025-11-01,Tenda campeggio,61,stagionale estiva
+2025-12-01,Tenda campeggio,59,stagionale estiva
+2022-01-01,Giacca sci,224,stagionale invernale
+2022-02-01,Giacca sci,211,stagionale invernale
+2022-03-01,Giacca sci,131,stagionale invernale
+2022-04-01,Giacca sci,65,stagionale invernale
+2022-05-01,Giacca sci,39,stagionale invernale
+2022-06-01,Giacca sci,38,stagionale invernale
+2022-07-01,Giacca sci,22,stagionale invernale
+2022-08-01,Giacca sci,33,stagionale invernale
+2022-09-01,Giacca sci,38,stagionale invernale
+2022-10-01,Giacca sci,48,stagionale invernale
+2022-11-01,Giacca sci,122,stagionale invernale
+2022-12-01,Giacca sci,176,stagionale invernale
+2023-01-01,Giacca sci,230,stagionale invernale
+2023-02-01,Giacca sci,166,stagionale invernale
+2023-03-01,Giacca sci,118,stagionale invernale
+2023-04-01,Giacca sci,67,stagionale invernale
+2023-05-01,Giacca sci,47,stagionale invernale
+2023-06-01,Giacca sci,71,stagionale invernale
+2023-07-01,Giacca sci,46,stagionale invernale
+2023-08-01,Giacca sci,24,stagionale invernale
+2023-09-01,Giacca sci,71,stagionale invernale
+2023-10-01,Giacca sci,47,stagionale invernale
+2023-11-01,Giacca sci,122,stagionale invernale
+2023-12-01,Giacca sci,202,stagionale invernale
+2024-01-01,Giacca sci,224,stagionale invernale
+2024-02-01,Giacca sci,209,stagionale invernale
+2024-03-01,Giacca sci,117,stagionale invernale
+2024-04-01,Giacca sci,65,stagionale invernale
+2024-05-01,Giacca sci,31,stagionale invernale
+2024-06-01,Giacca sci,51,stagionale invernale
+2024-07-01,Giacca sci,25,stagionale invernale
+2024-08-01,Giacca sci,14,stagionale invernale
+2024-09-01,Giacca sci,57,stagionale invernale
+2024-10-01,Giacca sci,53,stagionale invernale
+2024-11-01,Giacca sci,113,stagionale invernale
+2024-12-01,Giacca sci,216,stagionale invernale
+2025-01-01,Giacca sci,249,stagionale invernale
+2025-02-01,Giacca sci,200,stagionale invernale
+2025-03-01,Giacca sci,125,stagionale invernale
+2025-04-01,Giacca sci,50,stagionale invernale
+2025-05-01,Giacca sci,48,stagionale invernale
+2025-06-01,Giacca sci,49,stagionale invernale
+2025-07-01,Giacca sci,44,stagionale invernale
+2025-08-01,Giacca sci,33,stagionale invernale
+2025-09-01,Giacca sci,0,stagionale invernale
+2025-10-01,Giacca sci,65,stagionale invernale
+2025-11-01,Giacca sci,114,stagionale invernale
+2025-12-01,Giacca sci,188,stagionale invernale
