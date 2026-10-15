@@ -1,11 +1,9 @@
-"""Motore didattico per previsione domanda e dimensionamento scorte (periodi mensili)."""
 import numpy as np
 import pandas as pd
 
 METHODS = ['Media mobile (3 mesi)', 'Smorzamento esponenziale', 'Trend lineare', 'Naive stagionale (12 mesi)']
 
 def forecast(train, horizon, method):
-    """Previsioni non negative, senza accesso ai dati futuri."""
     x = np.asarray(train, dtype=float)
     if len(x) < 3 or horizon < 1:
         raise ValueError('Servono almeno 3 mesi storici e un orizzonte positivo')
@@ -33,7 +31,6 @@ def forecast(train, horizon, method):
     return np.asarray(out, dtype=float)
 
 def evaluate(series, test_months=12):
-    """Backtest rolling-origin, predizione a un passo; MAE/RMSE/sMAPE."""
     x = np.asarray(series, dtype=float)
     if len(x) < test_months + 12:
         raise ValueError('Storico insufficiente per il test')
@@ -50,7 +47,6 @@ def evaluate(series, test_months=12):
     return table, predictions
 
 def scenario(series, variability=1.0, trend=1.0, seasonality=1.0):
-    """Modifica deterministica delle componenti rispetto a un livello medio; non rigenera casualmente."""
     x = np.asarray(series, dtype=float)
     t = np.arange(len(x))
     months = t % 12
@@ -66,13 +62,6 @@ def scenario(series, variability=1.0, trend=1.0, seasonality=1.0):
     return np.maximum(0, base + trend * trend_part + seasonality * seasonal + variability * noise)
 
 def inventory(future, residual_std, lead_months=1.0, service=0.95, review_months=1.0):
-    """Scorte in unità; review periodica; domanda mensile e lead time in mesi.
-
-    Pipeline: domanda media * L. Ciclica: domanda media * R/2.
-    Sicurezza: z * RMSE un passo * sqrt(L+R), proxy in ipotesi errori indipendenti.
-    Anticipata: surplus massimo cumulato durante l'orizzonte annuale rispetto al consumo medio,
-    riparametrizzato a zero; è un indicatore di pre-building, non stock corrente certo.
-    """
     from statistics import NormalDist
     y = np.asarray(future, dtype=float)
     avg = float(y.mean())

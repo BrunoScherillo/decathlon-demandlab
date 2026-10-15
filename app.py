@@ -1,4 +1,4 @@
-"""Interfaccia essenziale per il laboratorio didattico Decathlon DemandLab."""
+"""Interfaccia per il laboratorio didattico Decathlon DemandLab."""
 from pathlib import Path
 
 import numpy as np
@@ -9,9 +9,9 @@ import streamlit as st
 
 from model import evaluate, forecast, inventory, scenario
 
-st.set_page_config(page_title="Decathlon DemandLab", page_icon="📦", layout="wide")
-st.title("📦 Decathlon DemandLab")
-st.caption("Previsioni e scorte • Esercizio didattico con dati sintetici, non vendite reali Decathlon")
+st.set_page_config(page_title="Decathlon DemandLab", page_icon="📊", layout="wide")
+st.title("📊 Decathlon DemandLab")
+st.caption("Previsioni e scorte • Progetto didattico con dati sintetici, non vendite reali Decathlon")
 
 
 @st.cache_data
@@ -27,9 +27,9 @@ with st.sidebar:
     st.header("Impostazioni")
     item = st.selectbox("Prodotto", sorted(data["articolo"].unique()))
     st.markdown("**Domanda**")
-    variability = st.slider("Variabilità", 0.0, 2.5, 1.0, 0.1, help="1 = scenario originale")
-    trend = st.slider("Trend", 0.0, 2.5, 1.0, 0.1, help="1 = scenario originale")
-    seasonality = st.slider("Stagionalità", 0.0, 2.5, 1.0, 0.1, help="1 = scenario originale")
+    variability = st.slider("Variabilità", 0.0, 2.5, 1.0, 0.1, help="1 = scenario iniziale")
+    trend = st.slider("Trend", 0.0, 2.5, 1.0, 0.1, help="1 = scenario iniziale")
+    seasonality = st.slider("Stagionalità", 0.0, 2.5, 1.0, 0.1, help="1 = scenario iniziale")
     st.markdown("**Approvvigionamento**")
     lead = st.slider("Lead time (mesi)", 0.25, 4.0, 1.0, 0.25)
     service = st.select_slider(
@@ -51,10 +51,15 @@ base_stock = inventory(base_future, base_score.iloc[0]["RMSE"], 1.0, 0.95)
 fdates = pd.date_range(history["mese"].iloc[-1] + pd.offsets.MonthBegin(1), periods=12, freq="MS")
 
 st.subheader(f"Risultati · {item}")
-metric1, metric2, metric3 = st.columns(3)
-metric1.metric("Metodo più preciso", best)
-metric2.metric("Domanda media prevista", f"{future.mean():.0f} pezzi/mese")
-metric3.metric("Errore MAE", f"{score.iloc[0]['MAE']:.1f} pezzi")
+riepilogo = pd.DataFrame({
+    "Indicatore": ["Metodo più preciso", "Domanda media prevista", "Errore MAE"],
+    "Valore": [
+        best,
+        f"{future.mean():.0f} pezzi/mese",
+        f"{score.iloc[0]['MAE']:.1f} pezzi",
+    ],
+})
+st.table(riepilogo.set_index("Indicatore"))
 st.caption("Metodo selezionato in base al MAE più basso nei test sugli ultimi 12 mesi.")
 
 st.markdown("#### 1. Domanda: storico e previsione")
@@ -90,9 +95,9 @@ with st.expander("Dettagli dei calcoli e tabelle"):
     **Metodi:** media mobile a 3 mesi; smorzamento esponenziale (α=0,35);
     regressione lineare; ripetizione dei 12 mesi precedenti (naive stagionale).
 
-    **Scorta ciclica** = domanda media × 1 mese / 2.
-    **Scorta di sicurezza** = z(livello di servizio) × RMSE × √(lead time + 1 mese).
-    **Scorta pipeline** = domanda media × lead time (merce in transito).
+    **Scorta ciclica** = domanda media x 1 mese / 2.
+    **Scorta di sicurezza** = z(livello di servizio) x RMSE x √(lead time + 1 mese).
+    **Scorta pipeline** = domanda media x lead time (merce in transito).
     **Scorta anticipata** = massimo surplus cumulato positivo della domanda prevista rispetto alla media annuale.
 
     La scorta anticipata è una stima semplificata dell'accumulo prima dei picchi;
