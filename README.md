@@ -9,9 +9,6 @@
 Prerequisito: Python 3.10+.
 
 ```bash
-python -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
@@ -33,7 +30,7 @@ python -m pytest -q
 - `app.py`: interfaccia con filtri e grafici comparativi.
 - `model.py`: 4 modelli previsionali, backtest cronologico, scenari e scorte.
 - `generate_data.py`: dati riproducibili (seed=2026), quattro articoli × 48 mesi.
-- `data/domanda_sintetica.csv`: 192 osservazioni mensili.
+- `data/demand_history.csv`: 192 osservazioni mensili.
 - `tests/test_model.py`: test di funzionamento.
 
 ## Come usare la dashboard
@@ -45,12 +42,3 @@ python -m pytest -q
 5. Scarica il CSV delle previsioni per discutere un caso concreto nella relazione.
 
 **Nota metodologica:** confronto di previsione: backtest rolling-origin sui 12 mesi finali, senza usare dati futuri per stimare i modelli. Selezione per MAE, RMSE e sMAPE come supporto. Le scorte sono quantità di pianificazione illustrative: non costituiscono una simulazione di inventario operativa e non vanno sommate indiscriminatamente.
-
-## Fonti aziendali
-
-- Dati Decathlon al 31 dicembre 2025: https://www.decathlon-united.media/en_GB/key-figures
-- Organizzazione logistica: https://sustainability.decathlon.com/what-does-distribution-mean-at-decathlon
-- Produzione e supply chain: https://sustainability.decathlon.com/the-production-and-manufacturing-of-decathlon-products
-- Italia: https://it.decathlon.press/it_IT/su-di-noi
-
-Consultazione: 14 ottobre 2026. I dati sintetici sono costruiti a fini formativi.

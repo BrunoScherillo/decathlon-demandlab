@@ -38,4 +38,4 @@ def generate(path=None):
     return frame
 
 if __name__ == '__main__':
-    generate(Path(__file__).parent / 'data' / 'domanda_sintetica.csv')
+    generate(Path(__file__).parent / 'data' / 'demand_history.csv')

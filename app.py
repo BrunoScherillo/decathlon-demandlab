@@ -16,7 +16,7 @@ st.caption("Previsioni e scorte • Progetto didattico con dati sintetici, non v
 
 @st.cache_data
 def load_data():
-    path = Path(__file__).resolve().parent / "data" / "domanda_sintetica.csv"
+    path = Path(__file__).resolve().parent / "data" / "demand_history.csv"
     return pd.read_csv(path, parse_dates=["mese"])
 
 
@@ -95,9 +95,9 @@ with st.expander("Dettagli dei calcoli e tabelle"):
     **Metodi:** media mobile a 3 mesi; smorzamento esponenziale (α=0,35);
     regressione lineare; ripetizione dei 12 mesi precedenti (naive stagionale).
 
-    **Scorta ciclica** = domanda media x 1 mese / 2.
-    **Scorta di sicurezza** = z(livello di servizio) x RMSE x √(lead time + 1 mese).
-    **Scorta pipeline** = domanda media x lead time (merce in transito).
+    **Scorta ciclica** = domanda media x 1 mese / 2.\n
+    **Scorta di sicurezza** = z(livello di servizio) x RMSE x √(lead time + 1 mese).\n
+    **Scorta pipeline** = domanda media x lead time (merce in transito).\n
     **Scorta anticipata** = massimo surplus cumulato positivo della domanda prevista rispetto alla media annuale.
 
     La scorta anticipata è una stima semplificata dell'accumulo prima dei picchi;

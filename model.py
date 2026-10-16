@@ -51,10 +51,8 @@ def scenario(series, variability=1.0, trend=1.0, seasonality=1.0):
     t = np.arange(len(x))
     months = t % 12
     base = np.mean(x)
-    # Componente lineare stimata sullo storico
     slope = np.polyfit(t, x, 1)[0]
     trend_part = slope * (t - t.mean())
-    # Profilo stagionale per mese, detrendizzato
     residual = x - trend_part - base
     monthly = np.array([residual[months == m].mean() for m in range(12)])
     seasonal = monthly[months]
