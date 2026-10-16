@@ -80,7 +80,7 @@ fig.add_trace(go.Scatter(x=history["mese"], y=changed, mode="lines", name="Stori
 fig.add_trace(go.Scatter(x=fdates, y=future, mode="lines+markers", name="Previsione"))
 fig.add_trace(go.Scatter(x=fdates, y=base_future, mode="lines", line=dict(dash="dash"), name="Scenario base"))
 fig.update_layout(xaxis_title="Mese", yaxis_title="Pezzi", margin=dict(l=10, r=10, t=15, b=10), height=340, legend=dict(orientation="h", y=-0.3))
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width='stretch')
 
 #I grafici degli errori e delle scorte sono affiancati
 left, right = st.columns(2, gap="large")
@@ -90,7 +90,7 @@ with left:
     #Un MAE inferiore indica maggiore accuratezza nel periodo di valutazione
     error_fig = px.bar(score, x="MAE", y="Metodo", orientation="h", text_auto=".1f")
     error_fig.update_layout(xaxis_title="Errore MAE (pezzi)", yaxis_title=None, margin=dict(l=0, r=15, t=10, b=5), height=285)
-    st.plotly_chart(error_fig, use_container_width=True)
+    st.plotly_chart(error_fig, width='stretch')
     st.caption("Barra più corta = previsione più accurata.")
 with right:
     #Terzo grafico
@@ -100,15 +100,15 @@ with right:
     stocks_long = stocks.melt("Tipo", var_name="Scenario", value_name="Pezzi")
     stock_fig = px.bar(stocks_long, x="Tipo", y="Pezzi", color="Scenario", barmode="group")
     stock_fig.update_layout(xaxis_title=None, yaxis_title="Pezzi", margin=dict(l=0, r=10, t=10, b=5), height=285, legend=dict(orientation="h", y=-0.3))
-    st.plotly_chart(stock_fig, use_container_width=True)
+    st.plotly_chart(stock_fig, width='stretch')
     st.caption("Le scorte sono indicatori distinti: non vanno sommate automaticamente.")
 
 #Componente expander che contiene tutti i dettagli metodologici
 with st.expander("Dettagli dei calcoli e tabelle"):
     st.write("**Errori dei metodi previsionali**")
-    st.dataframe(score.style.format({"MAE": "{:.2f}", "RMSE": "{:.2f}", "sMAPE (%)": "{:.1f}"}), hide_index=True, use_container_width=True)
+    st.dataframe(score.style.format({"MAE": "{:.2f}", "RMSE": "{:.2f}", "sMAPE (%)": "{:.1f}"}), hide_index=True, width='stretch')
     st.write("**Quantità delle scorte (pezzi)**")
-    st.dataframe(stocks.round(1), hide_index=True, use_container_width=True)
+    st.dataframe(stocks.round(1), hide_index=True, width='stretch')
     st.markdown("""
     **Metodi:** media mobile a 3 mesi; smorzamento esponenziale (α=0,35);
     regressione lineare; ripetizione dei 12 mesi precedenti (naive stagionale).
