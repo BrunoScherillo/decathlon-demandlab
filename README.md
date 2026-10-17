@@ -6,6 +6,20 @@ Decathlon DemandLab è un progetto universitario realizzato con **Python** e **S
 
 > **Importante:** i dati utilizzati sono inventati e generati per questo esercizio. Non sono dati di vendita reali o ufficiali di Decathlon. L'azienda non partecipa al progetto.
 
+---
+
+## Indice
+
+1. [Cosa fa il progetto](#cosa-fa-il-progetto)
+2. [Tecnologie utilizzate](#tecnologie-utilizzate)
+3. [Come avviare la dashboard](#come-avviare-la-dashboard)
+4. [Come usare la dashboard](#come-usare-la-dashboard)
+5. [Struttura del progetto](#struttura-del-progetto)
+6. [Rigenerare i dati ed eseguire i test](#rigenerare-i-dati-ed-eseguire-i-test)
+7. [Come vengono valutate le previsioni](#come-vengono-valutate-le-previsioni)
+
+---
+
 ## Cosa fa il progetto
 
 L'applicazione analizza la domanda di quattro articoli sportivi:
@@ -39,22 +53,37 @@ La dashboard permette di:
 
 ## Come avviare la dashboard
 
-Serve **Python 3.10 o una versione successiva**.
+### 1. Installare Python (se non è già presente)
 
-1. Aprire il terminale nella cartella del progetto.
-2. Installare le librerie necessarie:
+Serve **Python 3.10 o una versione successiva**. Per controllare se è già installato, aprire il terminale (su Windows: *Prompt dei comandi* o *PowerShell*) ed eseguire:
 
-   ```bash
-   python -m pip install -r requirements.txt
-   ```
+```bash
+python --version
+```
 
-3. Avviare l'applicazione:
+Se compare un numero di versione pari o superiore a 3.10, si può passare al punto successivo. Altrimenti:
 
-   ```bash
-   python -m streamlit run app.py
-   ```
+- scaricare Python da <https://www.python.org/downloads/>;
+- **Windows:** nella prima schermata dell'installazione spuntare **"Add Python to PATH"** prima di cliccare su *Install Now*.
+- **macOS / Linux:** su alcuni sistemi il comando si chiama `python3` invece di `python`; in tal caso usare `python3` e `pip3` in tutti i comandi seguenti.
 
-La dashboard si aprirà nel browser, normalmente all'indirizzo <http://localhost:8501>.
+### 2. Scaricare il progetto
+
+Scaricare la cartella del progetto (oppure clonarla con Git) e aprire il terminale al suo interno.
+
+### 3. Installare le librerie
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### 4. Avviare l'applicazione
+
+```bash
+python -m streamlit run app.py
+```
+
+La dashboard si aprirà nel browser, normalmente all'indirizzo <http://localhost:8501>. Per chiudere l'applicazione, premere `Ctrl + C` nel terminale.
 
 ## Come usare la dashboard
 
@@ -78,32 +107,36 @@ La dashboard si aprirà nel browser, normalmente all'indirizzo <http://localhost
 
 Per variabilità, trend e stagionalità, **il valore 1 mantiene lo scenario iniziale**.
 
-## File principali
+## Struttura del progetto
 
-| File | A cosa serve |
-| --- | --- |
-| `app.py` | Mostra la dashboard e gestisce i comandi dell'utente |
-| `style.css` | Definisce lo stile grafico della dashboard |
-| `model.py` | Calcola previsioni, errori e scorte |
-| `generate_data.py` | Genera i dati di esempio |
-| `data/demand_history.csv` | Contiene i dati mensili dei quattro prodotti |
-| `.streamlit/config.toml` | Imposta i colori del tema di Streamlit |
-| `tests/test_model.py` | Contiene i test automatici |
-| `requirements.txt` | Elenca le librerie da installare |
+```text
+decathlon-demandlab/
+├── app.py                  # dashboard e gestione dei comandi
+├── style.css               # stile grafico
+├── model.py                # previsioni, errori e scorte
+├── generate_data.py        # generazione dei dati di esempio
+├── requirements.txt        # librerie da installare
+├── data/
+│   └── demand_history.csv  # dati mensili dei quattro prodotti
+├── .streamlit/
+│   └── config.toml         # colori del tema di Streamlit
+└── tests/
+    └── test_model.py       # test automatici
+```
 
-### Rigenerare i dati (facoltativo)
+## Rigenerare i dati ed eseguire i test
 
-Per ricreare il file CSV, eseguire:
+Entrambi i passaggi sono **facoltativi**.
+
+**Rigenerare i dati.** Per ricreare il file CSV:
 
 ```bash
 python generate_data.py
 ```
 
-Lo script usa un valore casuale iniziale fisso (`2026`), quindi genera dati ripetibili. Non è necessario eseguire questo comando ogni volta che la dashboard viene aperta: il CSV è già incluso nel progetto.
+Lo script usa un valore casuale iniziale fisso (`2026`), quindi genera sempre gli stessi dati. Non serve eseguirlo ogni volta che si apre la dashboard: il CSV è già incluso nel progetto.
 
-### Eseguire i test (facoltativo)
-
-Per verificare alcune funzioni del programma, eseguire:
+**Eseguire i test.** Per verificare alcune funzioni del programma:
 
 ```bash
 python -m pytest -q
