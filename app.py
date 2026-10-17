@@ -9,28 +9,38 @@ import streamlit as st
 #Importa dal motore di calcolo le funzioni usate dalla dashboard
 from model import evaluate, forecast, inventory, scenario
 
-#Colori usati nei grafici
+#Variabili costanti
 BLUE = "#1976f3"
 ORANGE = "#ff8a1f"
 GREY = "#8a94a6"
+TEXT = "#3d4b61"
+GRID = "#eef2f8"
+BASE_DIR = Path(__file__).resolve().parent
 
 #Configura titolo, icona e disposizione della pagina web
 st.set_page_config(page_title="Decathlon DemandLab", page_icon="📊", layout="wide")
 
-#Lettura del file CSS
-css_path = Path(__file__).resolve().parent / "style.css"
-st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
+@st.cache_data
+def load_css():
+    return (BASE_DIR / "style.css").read_text(encoding="utf-8")
+st.markdown(f"<style>{load_css()}</style>", unsafe_allow_html=True)
 
 #Fornisce a tutti i grafici lo stesso aspetto (sfondo trasparente, griglia chiara)
-def style_chart(figure):
+def style_chart(figure, **layout):
     figure.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="Inter, Segoe UI, sans-serif", size=12, color="#3d4b61"),
+        font=dict(family="Inter, Segoe UI, sans-serif", size=12, color=TEXT),
+        **layout,
     )
-    figure.update_xaxes(gridcolor="#eef2f8", zeroline=False)
-    figure.update_yaxes(gridcolor="#eef2f8", zeroline=False)
+    figure.update_xaxes(gridcolor=GRID, zeroline=False)
+    figure.update_yaxes(gridcolor=GRID, zeroline=False)
     return figure
+
+
+#Formattatore in stile italiano (punto per le migliaia, virgola per i decimali)
+def fmt_it(value, decimals=0):
+    return f"{value:,.{decimals}f}".replace(",", "#").replace(".", ",").replace("#", ".")
 
 
 #Creazione HTML di una scheda KPI (icona colorata + etichetta + valore + unità)
@@ -64,8 +74,39 @@ st.markdown(
 @st.cache_data
 def load_data():
     #Il percorso è relativo alla cartella del progetto
-    path = Path(__file__).resolve().parent / "data" / "demand_history.csv"
-    return pd.read_csv(path, parse_dates=["mese"])
+    path = BASE_DIR / "data" / "demand_history.csv"
+    return pd.read_csv(path, parse_dates=["mese"]).sort_values(["articolo", "mese"]).reset_index(drop=True)
+
+
+@st.cache_data
+def get_actual(item):
+    data = load_data()
+    return data.loc[data["articolo"] == item, "domanda_unita"].to_numpy(float)
+
+
+@st.cache_data
+def run_scenario(item, variability, trend, seasonality):
+    changed = scenario(get_actual(item), variability, trend, seasonality)
+    #Valuta i metodi e seleziona quello con MAE più basso
+    score, _ = evaluate(changed)
+    future = forecast(changed, 12, score.iloc[0]["Metodo"])
+    return changed, score, future
+
+
+@st.cache_data
+def run_base(item):
+    actual = get_actual(item)
+    base_score, _ = evaluate(actual)
+    base_future = forecast(actual, 12, base_score.iloc[0]["Metodo"])
+    return base_future, base_score.iloc[0]["RMSE"]
+
+
+#Funzione che evita la deselezione del pulsante nel componente segmented_control
+def keep_service():
+    if st.session_state["service"] is None:
+        st.session_state["service"] = st.session_state["service_last"]
+    else:
+        st.session_state["service_last"] = st.session_state["service"]
 
 
 data = load_data()
@@ -85,46 +126,30 @@ with st.sidebar:
     st.session_state.setdefault("service", 0.95)
     st.session_state.setdefault("service_last", 0.95)
 
-    #Funzione che evita la deselezione del pulsante nel componente segmented_control
-    def keep_service():
-        if st.session_state["service"] is None:
-            st.session_state["service"] = st.session_state["service_last"]
-        else:
-            st.session_state["service_last"] = st.session_state["service"]
-
     service = st.segmented_control(
         "Livello di servizio", options=[0.90, 0.95, 0.975, 0.99],
         key="service", on_change=keep_service,
-        format_func=lambda value: f"{value * 100:g}%".replace(".", ","),
+        format_func=lambda value: fmt_it(value * 100, 1).replace(",0", "") + "%",
     )
 
-#Filtra i dati del prodotto selezionato e li ordina cronologicamente
-history = data.loc[data["articolo"] == item].sort_values("mese")
-actual = history["domanda_unita"].to_numpy(float)
-#Applica allo storico le modifiche richieste nella barra laterale
-changed = scenario(actual, variability, trend, seasonality)
-#Valuta i metodi e seleziona quello con MAE più basso
-score, _ = evaluate(changed)
-best = score.iloc[0]["Metodo"]
-future = forecast(changed, 12, best)
-#Calcola previsione senza modifiche, da usare come riferimento
-base_score, _ = evaluate(actual)
-base_future = forecast(actual, 12, base_score.iloc[0]["Metodo"])
+history = data.loc[data["articolo"] == item]
+changed, score, future = run_scenario(item, variability, trend, seasonality)
+base_future, base_rmse = run_base(item)
+top = score.iloc[0]
+best = top["Metodo"]
 #Stima le quattro tipologie di scorte nei due scenari
-stock = inventory(future, score.iloc[0]["RMSE"], lead, service)
-base_stock = inventory(base_future, base_score.iloc[0]["RMSE"], 1.0, 0.95)
+stock = inventory(future, top["RMSE"], lead, service)
+base_stock = inventory(base_future, base_rmse, 1.0, 0.95)
 #Prepara le date dei dodici mesi successivi allo storico
 fdates = pd.date_range(history["mese"].iloc[-1] + pd.offsets.MonthBegin(1), periods=12, freq="MS")
 
 #Blocco risultati
 st.subheader(f"Risultati - {item}")
-mean_text = f"{future.mean():,.0f}".replace(",", ".")
-mae_text = f"{score.iloc[0]['MAE']:.1f}".replace(".", ",")
 st.markdown(
     '<div class="kpi-grid">'
     + kpi_card("🏆", "blue", "Metodo più preciso", best)
-    + kpi_card("📊", "blue", "Domanda media prevista", mean_text, "pezzi/mese")
-    + kpi_card("🎯", "red", "Errore MAE", mae_text, "pezzi")
+    + kpi_card("📊", "blue", "Domanda media prevista", fmt_it(future.mean()), "pezzi/mese")
+    + kpi_card("🎯", "red", "Errore MAE", fmt_it(top["MAE"], 1), "pezzi")
     + "</div>",
     unsafe_allow_html=True,
 )
@@ -138,8 +163,10 @@ with st.container(key="card_domanda"):
     fig.add_trace(go.Scatter(x=history["mese"], y=changed, mode="lines", name="Storico", line=dict(color=BLUE)))
     fig.add_trace(go.Scatter(x=fdates, y=future, mode="lines+markers", name="Previsione", line=dict(color=ORANGE)))
     fig.add_trace(go.Scatter(x=fdates, y=base_future, mode="lines", line=dict(dash="dash", color=GREY), name="Scenario base"))
-    fig.update_layout(xaxis_title="Mese", yaxis_title="Pezzi", margin=dict(l=10, r=10, t=15, b=10), height=340, legend=dict(orientation="h", y=-0.3))
-    st.plotly_chart(style_chart(fig), width='stretch')
+    st.plotly_chart(
+        style_chart(fig, xaxis_title="Mese", yaxis_title="Pezzi", margin=dict(l=10, r=10, t=15, b=10), height=340, legend=dict(orientation="h", y=-0.3)),
+        width='stretch',
+    )
 
 #I grafici degli errori e delle scorte sono affiancati
 left, right = st.columns(2, gap="large")
@@ -149,21 +176,26 @@ with left:
         st.markdown("#### 2. Confronto dei metodi")
         #Un MAE inferiore indica maggiore accuratezza nel periodo di valutazione
         error_fig = px.bar(score, x="MAE", y="Metodo", orientation="h", text_auto=".1f", color_discrete_sequence=[BLUE])
-        error_fig.update_layout(xaxis_title="Errore MAE (pezzi)", yaxis_title=None, margin=dict(l=0, r=15, t=10, b=5), height=285)
         error_fig.update_yaxes(autorange="reversed")
-        st.plotly_chart(style_chart(error_fig), width='stretch')
+        # [OTTIMIZZATO] layout passato direttamente a style_chart (una sola chiamata)
+        st.plotly_chart(
+            style_chart(error_fig, xaxis_title="Errore MAE (pezzi)", yaxis_title=None, margin=dict(l=0, r=15, t=10, b=5), height=285),
+            width='stretch',
+        )
         st.caption("Barra più corta = previsione più accurata.")
 with right:
     with st.container(key="card_scorte"):
         #Terzo grafico
         st.markdown("#### 3. Scorte: base vs scenario")
         #Riordina i valori delle scorte per confrontare base e scenario modificato
-        stocks = pd.DataFrame({"Tipo": list(stock), "Base": list(base_stock.values()), "Modificato": list(stock.values())})
+        stocks = pd.DataFrame({"Tipo": list(stock), "Base": [base_stock[k] for k in stock], "Modificato": list(stock.values())})
         stocks_long = stocks.melt("Tipo", var_name="Scenario", value_name="Pezzi")
         stock_fig = px.bar(stocks_long, x="Tipo", y="Pezzi", color="Scenario", barmode="group",
                            color_discrete_map={"Base": BLUE, "Modificato": ORANGE})
-        stock_fig.update_layout(xaxis_title=None, yaxis_title="Pezzi", margin=dict(l=0, r=10, t=10, b=5), height=285, legend=dict(orientation="h", y=-0.3))
-        st.plotly_chart(style_chart(stock_fig), width='stretch')
+        st.plotly_chart(
+            style_chart(stock_fig, xaxis_title=None, yaxis_title="Pezzi", margin=dict(l=0, r=10, t=10, b=5), height=285, legend=dict(orientation="h", y=-0.3)),
+            width='stretch',
+        )
         st.caption("Le scorte sono indicatori distinti: non vanno sommate automaticamente.")
 
 #Blocco expander che contiene tutti i dettagli metodologici
