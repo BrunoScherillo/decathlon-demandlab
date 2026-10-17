@@ -82,14 +82,21 @@ with st.sidebar:
     seasonality = st.slider("Stagionalità", 0.0, 2.5, 1.0, 0.1, help="1 = scenario iniziale")
     st.markdown("**Approvvigionamento**")
     lead = st.slider("Lead time (mesi)", 0.25, 4.0, 1.0, 0.25)
+    st.session_state.setdefault("service", 0.95)
+    st.session_state.setdefault("service_last", 0.95)
+
+    #Funzione che evita la deselezione del pulsante nel componente segmented_control
+    def keep_service():
+        if st.session_state["service"] is None:
+            st.session_state["service"] = st.session_state["service_last"]
+        else:
+            st.session_state["service_last"] = st.session_state["service"]
+
     service = st.segmented_control(
-        "Livello di servizio", options=[0.90, 0.95, 0.975, 0.99], default=0.95,
+        "Livello di servizio", options=[0.90, 0.95, 0.975, 0.99],
+        key="service", on_change=keep_service,
         format_func=lambda value: f"{value * 100:g}%".replace(".", ","),
     )
-    #Se l'utente deseleziona il pulsante, torna al valore standard 95%
-    if service is None:
-        service = 0.95
-    st.info("Valore 1 per domanda = scenario base. Previsione: 12 mesi.", icon="ℹ️")
 
 #Filtra i dati del prodotto selezionato e li ordina cronologicamente
 history = data.loc[data["articolo"] == item].sort_values("mese")
