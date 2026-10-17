@@ -9,10 +9,55 @@ import streamlit as st
 #Importa dal motore di calcolo le funzioni usate dalla dashboard
 from model import evaluate, forecast, inventory, scenario
 
+#Colori usati nei grafici
+BLUE = "#1976f3"
+ORANGE = "#ff8a1f"
+GREY = "#8a94a6"
+
 #Configura titolo, icona e disposizione della pagina web
 st.set_page_config(page_title="Decathlon DemandLab", page_icon="📊", layout="wide")
-st.title("📊 Decathlon DemandLab")
-st.caption("Previsioni e scorte • Progetto didattico con dati sintetici, non vendite reali Decathlon")
+
+#Lettura del file CSS
+css_path = Path(__file__).resolve().parent / "style.css"
+st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
+
+#Fornisce a tutti i grafici lo stesso aspetto (sfondo trasparente, griglia chiara)
+def style_chart(figure):
+    figure.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter, Segoe UI, sans-serif", size=12, color="#3d4b61"),
+    )
+    figure.update_xaxes(gridcolor="#eef2f8", zeroline=False)
+    figure.update_yaxes(gridcolor="#eef2f8", zeroline=False)
+    return figure
+
+
+#Creazione HTML di una scheda KPI (icona colorata + etichetta + valore + unità)
+def kpi_card(icon, color, label, value, unit=""):
+    return (
+        f'<div class="kpi-card">'
+        f'<div class="kpi-icon {color}">{icon}</div>'
+        f'<div><div class="kpi-label">{label}</div>'
+        f'<div class="kpi-value">{value}</div>'
+        f'<div class="kpi-unit">{unit}</div></div>'
+        f'</div>'
+    )
+
+
+#Blocco titolo + icona + descrizione
+st.markdown(
+    """
+<div class="app-header">
+  <div class="app-logo">📊</div>
+  <div>
+    <p class="app-title">Decathlon DemandLab</p>
+    <p class="app-subtitle">Previsioni e scorte - Progetto didattico con dati sintetici, non vendite reali Decathlon</p>
+  </div>
+</div>
+""",
+    unsafe_allow_html=True,
+)
 
 
 #Memorizza il dataset in cache per evitare di rileggerlo a ogni interazione
@@ -25,9 +70,10 @@ def load_data():
 
 data = load_data()
 
+#Blocco barra laterale
 #Tutti i controlli sono raccolti nella barra laterale, per mantenere pulita la schermata
 with st.sidebar:
-    st.header("Impostazioni")
+    st.header("⚙️ Impostazioni")
     item = st.selectbox("Prodotto", sorted(data["articolo"].unique()))
     st.markdown("**Domanda**")
     #I tre moltiplicatori valgono 1.0 nello scenario iniziale
@@ -36,11 +82,14 @@ with st.sidebar:
     seasonality = st.slider("Stagionalità", 0.0, 2.5, 1.0, 0.1, help="1 = scenario iniziale")
     st.markdown("**Approvvigionamento**")
     lead = st.slider("Lead time (mesi)", 0.25, 4.0, 1.0, 0.25)
-    service = st.select_slider(
-        "Livello di servizio", options=[0.90, 0.95, 0.975, 0.99], value=0.95,
-        format_func=lambda value: f"{value:.1%}",
+    service = st.segmented_control(
+        "Livello di servizio", options=[0.90, 0.95, 0.975, 0.99], default=0.95,
+        format_func=lambda value: f"{value * 100:g}%".replace(".", ","),
     )
-    st.caption("Valore 1 per domanda = scenario base. Previsione: 12 mesi.")
+    #Se l'utente deseleziona il pulsante, torna al valore standard 95%
+    if service is None:
+        service = 0.95
+    st.info("Valore 1 per domanda = scenario base. Previsione: 12 mesi.", icon="ℹ️")
 
 #Filtra i dati del prodotto selezionato e li ordina cronologicamente
 history = data.loc[data["articolo"] == item].sort_values("mese")
@@ -60,50 +109,57 @@ base_stock = inventory(base_future, base_score.iloc[0]["RMSE"], 1.0, 0.95)
 #Prepara le date dei dodici mesi successivi allo storico
 fdates = pd.date_range(history["mese"].iloc[-1] + pd.offsets.MonthBegin(1), periods=12, freq="MS")
 
-st.subheader(f"Risultati · {item}")
-#Tabella sintetica con metodo migliore, domanda media futura e MAE
-riepilogo = pd.DataFrame({
-    "Indicatore": ["Metodo più preciso", "Domanda media prevista", "Errore MAE"],
-    "Valore": [
-        best,
-        f"{future.mean():.0f} pezzi/mese",
-        f"{score.iloc[0]['MAE']:.1f} pezzi",
-    ],
-})
-st.table(riepilogo.set_index("Indicatore"))
+#Blocco risultati
+st.subheader(f"Risultati - {item}")
+mean_text = f"{future.mean():,.0f}".replace(",", ".")
+mae_text = f"{score.iloc[0]['MAE']:.1f}".replace(".", ",")
+st.markdown(
+    '<div class="kpi-grid">'
+    + kpi_card("🏆", "blue", "Metodo più preciso", best)
+    + kpi_card("📊", "blue", "Domanda media prevista", mean_text, "pezzi/mese")
+    + kpi_card("🎯", "red", "Errore MAE", mae_text, "pezzi")
+    + "</div>",
+    unsafe_allow_html=True,
+)
 st.caption("Metodo selezionato in base al MAE più basso nei test sugli ultimi 12 mesi.")
 
-st.markdown("#### 1. Domanda: storico e previsione")
-#Primo grafico: domanda dello scenario modificato e due previsioni future
-fig = go.Figure()
-fig.add_trace(go.Scatter(x=history["mese"], y=changed, mode="lines", name="Storico"))
-fig.add_trace(go.Scatter(x=fdates, y=future, mode="lines+markers", name="Previsione"))
-fig.add_trace(go.Scatter(x=fdates, y=base_future, mode="lines", line=dict(dash="dash"), name="Scenario base"))
-fig.update_layout(xaxis_title="Mese", yaxis_title="Pezzi", margin=dict(l=10, r=10, t=15, b=10), height=340, legend=dict(orientation="h", y=-0.3))
-st.plotly_chart(fig, width='stretch')
+#Blocco tre grafici
+with st.container(key="card_domanda"):
+    st.markdown("#### 1. Domanda: storico e previsione")
+    #Primo grafico: domanda dello scenario modificato e due previsioni future
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=history["mese"], y=changed, mode="lines", name="Storico", line=dict(color=BLUE)))
+    fig.add_trace(go.Scatter(x=fdates, y=future, mode="lines+markers", name="Previsione", line=dict(color=ORANGE)))
+    fig.add_trace(go.Scatter(x=fdates, y=base_future, mode="lines", line=dict(dash="dash", color=GREY), name="Scenario base"))
+    fig.update_layout(xaxis_title="Mese", yaxis_title="Pezzi", margin=dict(l=10, r=10, t=15, b=10), height=340, legend=dict(orientation="h", y=-0.3))
+    st.plotly_chart(style_chart(fig), width='stretch')
 
 #I grafici degli errori e delle scorte sono affiancati
 left, right = st.columns(2, gap="large")
 with left:
-    #Secondo grafico
-    st.markdown("#### 2. Confronto dei metodi")
-    #Un MAE inferiore indica maggiore accuratezza nel periodo di valutazione
-    error_fig = px.bar(score, x="MAE", y="Metodo", orientation="h", text_auto=".1f")
-    error_fig.update_layout(xaxis_title="Errore MAE (pezzi)", yaxis_title=None, margin=dict(l=0, r=15, t=10, b=5), height=285)
-    st.plotly_chart(error_fig, width='stretch')
-    st.caption("Barra più corta = previsione più accurata.")
+    with st.container(key="card_metodi"):
+        #Secondo grafico
+        st.markdown("#### 2. Confronto dei metodi")
+        #Un MAE inferiore indica maggiore accuratezza nel periodo di valutazione
+        error_fig = px.bar(score, x="MAE", y="Metodo", orientation="h", text_auto=".1f", color_discrete_sequence=[BLUE])
+        error_fig.update_layout(xaxis_title="Errore MAE (pezzi)", yaxis_title=None, margin=dict(l=0, r=15, t=10, b=5), height=285)
+        error_fig.update_yaxes(autorange="reversed")
+        st.plotly_chart(style_chart(error_fig), width='stretch')
+        st.caption("Barra più corta = previsione più accurata.")
 with right:
-    #Terzo grafico
-    st.markdown("#### 3. Scorte: base vs scenario")
-    #Riordina i valori delle scorte per confrontare base e scenario modificato
-    stocks = pd.DataFrame({"Tipo": list(stock), "Base": list(base_stock.values()), "Modificato": list(stock.values())})
-    stocks_long = stocks.melt("Tipo", var_name="Scenario", value_name="Pezzi")
-    stock_fig = px.bar(stocks_long, x="Tipo", y="Pezzi", color="Scenario", barmode="group")
-    stock_fig.update_layout(xaxis_title=None, yaxis_title="Pezzi", margin=dict(l=0, r=10, t=10, b=5), height=285, legend=dict(orientation="h", y=-0.3))
-    st.plotly_chart(stock_fig, width='stretch')
-    st.caption("Le scorte sono indicatori distinti: non vanno sommate automaticamente.")
+    with st.container(key="card_scorte"):
+        #Terzo grafico
+        st.markdown("#### 3. Scorte: base vs scenario")
+        #Riordina i valori delle scorte per confrontare base e scenario modificato
+        stocks = pd.DataFrame({"Tipo": list(stock), "Base": list(base_stock.values()), "Modificato": list(stock.values())})
+        stocks_long = stocks.melt("Tipo", var_name="Scenario", value_name="Pezzi")
+        stock_fig = px.bar(stocks_long, x="Tipo", y="Pezzi", color="Scenario", barmode="group",
+                           color_discrete_map={"Base": BLUE, "Modificato": ORANGE})
+        stock_fig.update_layout(xaxis_title=None, yaxis_title="Pezzi", margin=dict(l=0, r=10, t=10, b=5), height=285, legend=dict(orientation="h", y=-0.3))
+        st.plotly_chart(style_chart(stock_fig), width='stretch')
+        st.caption("Le scorte sono indicatori distinti: non vanno sommate automaticamente.")
 
-#Componente expander che contiene tutti i dettagli metodologici
+#Blocco expander che contiene tutti i dettagli metodologici
 with st.expander("Dettagli dei calcoli e tabelle"):
     st.write("**Errori dei metodi previsionali**")
     st.dataframe(score.style.format({"MAE": "{:.2f}", "RMSE": "{:.2f}", "sMAPE (%)": "{:.1f}"}), hide_index=True, width='stretch')

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 #Metodi disponibili nella dashboard, nello stesso ordine usato dalla funzione forecast()
-METHODS = ['Media mobile (3 mesi)', 'Smorzamento esponenziale', 'Trend lineare', 'Naive stagionale (12 mesi)']
+METHODS = ['Media mobile (3 mesi)', 'Smorzamento esponenziale', 'Trend lineare', 'Naive stagionale']
 
 #Prevede la domanda per un numero di mesi usando il metodo scelto
 def forecast(train, horizon, method):

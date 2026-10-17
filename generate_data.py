@@ -48,5 +48,5 @@ def generate(path=None):
     return frame
 
 if __name__ == '__main__':
-    #Il CSV viene scritto soltanto se lo script è avviato direttamente (comando disponibile nel file README.mf)
+    #Il CSV viene scritto soltanto se lo script è avviato direttamente (comando disponibile nel file README.md)
     generate(Path(__file__).parent / 'data' / 'demand_history.csv')

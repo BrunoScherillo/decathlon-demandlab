@@ -1,4 +1,4 @@
-# 📊 Decathlon DemandLab
+# Decathlon DemandLab
 
 **Previsione della domanda e gestione delle scorte**
 
@@ -34,6 +34,7 @@ La dashboard permette di:
 - **Streamlit:** crea la pagina web interattiva.
 - **Pandas e NumPy:** aiutano a leggere i dati e a fare i calcoli.
 - **Plotly:** mostra i risultati attraverso grafici.
+- **CSS:** definisce tutta la parte grafica dell'interfaccia.
 - **Pytest:** permette di eseguire alcuni controlli automatici sul codice.
 
 ## Come avviare la dashboard
@@ -82,9 +83,11 @@ Per variabilità, trend e stagionalità, **il valore 1 mantiene lo scenario iniz
 | File | A cosa serve |
 | --- | --- |
 | `app.py` | Mostra la dashboard e gestisce i comandi dell'utente |
+| `style.css` | Definisce lo stile grafico della dashboard |
 | `model.py` | Calcola previsioni, errori e scorte |
 | `generate_data.py` | Genera i dati di esempio |
-| `data/demand_history.csv` | Contiene i dati mensili dei quattro prodotti (192 righe) |
+| `data/demand_history.csv` | Contiene i dati mensili dei quattro prodotti |
+| `.streamlit/config.toml` | Imposta i colori del tema di Streamlit |
 | `tests/test_model.py` | Contiene i test automatici |
 | `requirements.txt` | Elenca le librerie da installare |
 
