@@ -79,77 +79,77 @@ def load_data():
 
 
 @st.cache_data
-def get_actual(item):
-    data = load_data()
-    return data.loc[data["articolo"] == item, "domanda_unita"].to_numpy(float)
+def get_actual(selected_product):
+    demand_data = load_data()
+    return demand_data.loc[demand_data["articolo"] == selected_product, "domanda_unita"].to_numpy(float)
 
 
 @st.cache_data
-def run_scenario(item, variability, trend, seasonality):
-    changed = scenario(get_actual(item), variability, trend, seasonality)
+def run_scenario(selected_product, variability, trend, seasonality):
+    scenario_history = scenario(get_actual(selected_product), variability, trend, seasonality)
     # Valuta i metodi e seleziona quello con MAE più basso
-    score, _ = evaluate(changed)
-    future = forecast(changed, 12, score.iloc[0]["Metodo"])
-    return changed, score, future
+    model_scores, _ = evaluate(scenario_history)
+    forecast_values = forecast(scenario_history, 12, model_scores.iloc[0]["Metodo"])
+    return scenario_history, model_scores, forecast_values
 
 
 @st.cache_data
-def run_base(item):
-    actual = get_actual(item)
+def run_base(selected_product):
+    actual = get_actual(selected_product)
     base_score, _ = evaluate(actual)
-    base_future = forecast(actual, 12, base_score.iloc[0]["Metodo"])
-    return base_future, base_score.iloc[0]["RMSE"]
+    baseline_forecast = forecast(actual, 12, base_score.iloc[0]["Metodo"])
+    return baseline_forecast, base_score.iloc[0]["RMSE"]
 
 
 # Funzione che evita la deselezione del pulsante nel componente segmented_control
 def keep_service():
-    if st.session_state["service"] is None:
-        st.session_state["service"] = st.session_state["service_last"]
+    if st.session_state["service_level"] is None:
+        st.session_state["service_level"] = st.session_state["service_last"]
     else:
-        st.session_state["service_last"] = st.session_state["service"]
+        st.session_state["service_last"] = st.session_state["service_level"]
 
 
-data = load_data()
+demand_data = load_data()
 
 # Blocco barra laterale
 # Tutti i controlli sono raccolti nella barra laterale, per mantenere pulita la schermata
 with st.sidebar:
     st.header("⚙️ Impostazioni")
-    item = st.selectbox("Prodotto", sorted(data["articolo"].unique()))
+    selected_product = st.selectbox("Prodotto", sorted(demand_data["articolo"].unique()))
     st.markdown("**Domanda**")
     # I tre moltiplicatori valgono 1.0 nello scenario iniziale
     variability = st.slider("Variabilità", 0.0, 2.5, 1.0, 0.1, help="1 = scenario iniziale")
     trend = st.slider("Trend", 0.0, 2.5, 1.0, 0.1, help="1 = scenario iniziale")
     seasonality = st.slider("Stagionalità", 0.0, 2.5, 1.0, 0.1, help="1 = scenario iniziale")
     st.markdown("**Approvvigionamento**")
-    lead = st.slider("Lead time (mesi)", 0.25, 4.0, 1.0, 0.25)
-    st.session_state.setdefault("service", 0.95)
+    lead_time_months = st.slider("Lead time (mesi)", 0.25, 4.0, 1.0, 0.25)
+    st.session_state.setdefault("service_level", 0.95)
     st.session_state.setdefault("service_last", 0.95)
 
-    service = st.segmented_control(
+    service_level = st.segmented_control(
         "Livello di servizio", options=[0.90, 0.95, 0.975, 0.99],
-        key="service", on_change=keep_service,
+        key="service_level", on_change=keep_service,
         format_func=lambda value: fmt_it(value * 100, 1).replace(",0", "") + "%",
     )
 
-history = data.loc[data["articolo"] == item]
-changed, score, future = run_scenario(item, variability, trend, seasonality)
-base_future, base_rmse = run_base(item)
-top = score.iloc[0]
-best = top["Metodo"]
+history = demand_data.loc[demand_data["articolo"] == selected_product]
+scenario_history, model_scores, forecast_values = run_scenario(selected_product, variability, trend, seasonality)
+baseline_forecast, baseline_rmse = run_base(selected_product)
+best_model_result = model_scores.iloc[0]
+best_method = best_model_result["Metodo"]
 # Stima le quattro tipologie di scorte nei due scenari
-stock = inventory(future, top["RMSE"], lead, service)
-base_stock = inventory(base_future, base_rmse, 1.0, 0.95)
+scenario_inventory = inventory(forecast_values, best_model_result["RMSE"], lead_time_months, service_level)
+baseline_inventory = inventory(baseline_forecast, baseline_rmse, 1.0, 0.95)
 # Prepara le date dei dodici mesi successivi allo storico
-fdates = pd.date_range(history["mese"].iloc[-1] + pd.offsets.MonthBegin(1), periods=12, freq="MS")
+forecast_dates = pd.date_range(history["mese"].iloc[-1] + pd.offsets.MonthBegin(1), periods=12, freq="MS")
 
 # Blocco risultati
-st.subheader(f"Risultati - {item}")
+st.subheader(f"Risultati - {selected_product}")
 st.markdown(
     '<div class="kpi-grid">'
-    + kpi_card("🏆", "blue", "Metodo più preciso", best)
-    + kpi_card("📊", "blue", "Domanda media prevista", fmt_it(future.mean()), "pezzi/mese")
-    + kpi_card("🎯", "red", "Errore MAE", fmt_it(top["MAE"], 1), "pezzi")
+    + kpi_card("🏆", "blue", "Metodo più preciso", best_method)
+    + kpi_card("📊", "blue", "Domanda media prevista", fmt_it(forecast_values.mean()), "pezzi/mese")
+    + kpi_card("🎯", "red", "Errore MAE", fmt_it(best_model_result["MAE"], 1), "pezzi")
     + "</div>",
     unsafe_allow_html=True,
 )
@@ -159,12 +159,12 @@ st.caption("Metodo selezionato in base al MAE più basso nei test sugli ultimi 1
 with st.container(key="card_domanda"):
     st.markdown("#### 1. Domanda: storico e previsione")
     # Primo grafico: domanda dello scenario modificato e due previsioni future
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=history["mese"], y=changed, mode="lines", name="Storico", line=dict(color=BLUE)))
-    fig.add_trace(go.Scatter(x=fdates, y=future, mode="lines+markers", name="Previsione", line=dict(color=ORANGE)))
-    fig.add_trace(go.Scatter(x=fdates, y=base_future, mode="lines", line=dict(dash="dash", color=GREY), name="Scenario base"))
+    demand_chart = go.Figure()
+    demand_chart.add_trace(go.Scatter(x=history["mese"], y=scenario_history, mode="lines", name="Storico", line=dict(color=BLUE)))
+    demand_chart.add_trace(go.Scatter(x=forecast_dates, y=forecast_values, mode="lines+markers", name="Previsione", line=dict(color=ORANGE)))
+    demand_chart.add_trace(go.Scatter(x=forecast_dates, y=baseline_forecast, mode="lines", line=dict(dash="dash", color=GREY), name="Scenario base"))
     st.plotly_chart(
-        style_chart(fig, xaxis_title="Mese", yaxis_title="Pezzi", margin=dict(l=10, r=10, t=15, b=10), height=340, legend=dict(orientation="h", y=-0.3)),
+        style_chart(demand_chart, xaxis_title="Mese", yaxis_title="Pezzi", margin=dict(l=10, r=10, t=15, b=10), height=340, legend=dict(orientation="h", y=-0.3)),
         width='stretch',
     )
 
@@ -175,7 +175,7 @@ with left:
         # Secondo grafico
         st.markdown("#### 2. Confronto dei metodi")
         # Un MAE inferiore indica maggiore accuratezza nel periodo di valutazione
-        error_fig = px.bar(score, x="MAE", y="Metodo", orientation="h", text_auto=".1f", color_discrete_sequence=[BLUE])
+        error_fig = px.bar(model_scores, x="MAE", y="Metodo", orientation="h", text_auto=".1f", color_discrete_sequence=[BLUE])
         error_fig.update_yaxes(autorange="reversed")
         st.plotly_chart(
             style_chart(error_fig, xaxis_title="Errore MAE (pezzi)", yaxis_title=None, margin=dict(l=0, r=15, t=10, b=5), height=285),
@@ -187,7 +187,7 @@ with right:
         # Terzo grafico
         st.markdown("#### 3. Scorte: base vs scenario")
         # Riordina i valori delle scorte per confrontare base e scenario modificato
-        stocks = pd.DataFrame({"Tipo": list(stock), "Base": [base_stock[k] for k in stock], "Modificato": list(stock.values())})
+        stocks = pd.DataFrame({"Tipo": list(scenario_inventory), "Base": [baseline_inventory[k] for k in scenario_inventory], "Modificato": list(scenario_inventory.values())})
         stocks_long = stocks.melt("Tipo", var_name="Scenario", value_name="Pezzi")
         stock_fig = px.bar(stocks_long, x="Tipo", y="Pezzi", color="Scenario", barmode="group",
                            color_discrete_map={"Base": BLUE, "Modificato": ORANGE})
@@ -200,7 +200,7 @@ with right:
 # Blocco expander che contiene tutti i dettagli metodologici
 with st.expander("Dettagli dei calcoli e tabelle"):
     st.write("**Errori dei metodi previsionali**")
-    st.dataframe(score.style.format({"MAE": "{:.2f}", "RMSE": "{:.2f}", "sMAPE (%)": "{:.1f}"}), hide_index=True, width='stretch')
+    st.dataframe(model_scores.style.format({"MAE": "{:.2f}", "RMSE": "{:.2f}", "sMAPE (%)": "{:.1f}"}), hide_index=True, width='stretch')
     st.write("**Quantità delle scorte (pezzi)**")
     st.dataframe(stocks.round(1), hide_index=True, width='stretch')
     st.markdown("""
@@ -220,10 +220,10 @@ with st.expander("Dettagli dei calcoli e tabelle"):
 
 # Prepara il CSV esportabile con le previsioni di entrambi gli scenari
 export = pd.DataFrame({
-    "mese": fdates.strftime("%Y-%m-%d"),
-    "articolo": item,
-    "previsione_scenario": np.round(future, 1),
-    "previsione_base": np.round(base_future, 1),
+    "mese": forecast_dates.strftime("%Y-%m-%d"),
+    "articolo": selected_product,
+    "previsione_scenario": np.round(forecast_values, 1),
+    "previsione_base": np.round(baseline_forecast, 1),
 })
 # Download del documento CSV
 st.download_button("Scarica le previsioni (CSV)", export.to_csv(index=False).encode("utf-8"), "previsioni_scenario.csv", "text/csv")
