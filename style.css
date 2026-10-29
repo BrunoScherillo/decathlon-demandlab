@@ -26,8 +26,8 @@ header[data-testid="stHeader"] {
 }
 
 .block-container {
-    padding-top: 4.5rem;
-    padding-bottom: 2rem;
+    padding-top: 72px;
+    padding-bottom: 32px;
     max-width: 1200px;
 }
 
@@ -45,14 +45,14 @@ section[data-testid="stSidebar"] h2 {
 section[data-testid="stSidebar"] h2.side-title {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
     margin: 0;
-    padding: 0 0 0.5rem 0;
+    padding: 0 0 8px 0;
 }
 
 section[data-testid="stSidebar"] h2.side-title svg {
     flex-shrink: 0;
-    margin-right: 6px;
+    margin-right: 8px;
     color: var(--blue);
 }
 
@@ -69,15 +69,15 @@ section[data-testid="stSidebar"] strong {
 .app-header {
     display: flex;
     align-items: center;
-    gap: 20px;
-    margin-bottom: 1.2rem;
+    gap: 24px;
+    margin-bottom: 24px;
 }
 
 .app-logo {
     flex-shrink: 0;
-    width: 68px;
-    height: 68px;
-    border-radius: 12px;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
     background: var(--blue-soft);
     display: flex;
     align-items: center;
@@ -86,7 +86,7 @@ section[data-testid="stSidebar"] strong {
 }
 
 .app-header p.app-title {
-    margin: 0 0 2px 0;
+    margin: 0;
     font-size: 2.0rem;
     font-weight: 700;
     line-height: 1.15;
@@ -102,9 +102,9 @@ section[data-testid="stSidebar"] strong {
 
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-    margin-bottom: 0.4rem;
+    grid-template-columns: repeat(auto-fit, minmax(224px, 1fr));
+    gap: 16px;
+    margin-bottom: 8px;
 }
 
 .kpi-card,
@@ -116,21 +116,21 @@ section[data-testid="stSidebar"] strong {
 }
 .kpi-card,
 [class*="st-key-card_"] {
-    padding: 1rem 1.2rem;
+    padding: 16px 24px;
     box-shadow: var(--shadow);
 }
 
 .kpi-card {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
 }
 
 .kpi-icon {
     flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -157,15 +157,15 @@ section[data-testid="stSidebar"] strong {
     font-size: 1.05rem;
     font-weight: 700;
     color: var(--ink);
-    padding: 0 0 0.3rem 0;
+    padding: 0 0 8px 0;
 }
 
 .stDownloadButton button {
     background-color: var(--blue);
     color: #ffffff;
     border: none;
-    border-radius: 10px;
-    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    padding: 8px 24px;
     font-weight: 600;
 }
 .stDownloadButton button:hover {

@@ -165,7 +165,7 @@ with st.container(key="card_domanda"):
     demand_chart.add_trace(go.Scatter(x=forecast_dates, y=forecast_values, mode="lines+markers", name="Previsione", line=dict(color=ORANGE)))
     demand_chart.add_trace(go.Scatter(x=forecast_dates, y=baseline_forecast, mode="lines", line=dict(dash="dash", color=GREY), name="Scenario base"))
     st.plotly_chart(
-        style_chart(demand_chart, xaxis_title="Mese", yaxis_title="Pezzi", margin=dict(l=10, r=10, t=15, b=10), height=340, legend=dict(orientation="h", y=-0.3)),
+        style_chart(demand_chart, xaxis_title="Mese", yaxis_title="Pezzi", margin=dict(l=8, r=8, t=16, b=8), height=336, legend=dict(orientation="h", y=-0.3)),
         width='stretch',
     )
 
@@ -179,7 +179,7 @@ with left:
         error_fig = px.bar(model_scores, x="MAE", y="Metodo", orientation="h", text_auto=".1f", color_discrete_sequence=[BLUE])
         error_fig.update_yaxes(autorange="reversed")
         st.plotly_chart(
-            style_chart(error_fig, xaxis_title="Errore MAE (pezzi)", yaxis_title=None, margin=dict(l=0, r=15, t=10, b=5), height=285),
+            style_chart(error_fig, xaxis_title="Errore MAE (pezzi)", yaxis_title=None, margin=dict(l=0, r=16, t=8, b=8), height=288),
             width='stretch',
         )
         st.caption("Barra più corta = previsione più accurata.")
@@ -193,7 +193,7 @@ with right:
         stock_fig = px.bar(stocks_long, x="Tipo", y="Pezzi", color="Scenario", barmode="group",
                            color_discrete_map={"Base": BLUE, "Modificato": ORANGE})
         st.plotly_chart(
-            style_chart(stock_fig, xaxis_title=None, yaxis_title="Pezzi", margin=dict(l=0, r=10, t=10, b=5), height=285, legend=dict(orientation="h", y=-0.3)),
+            style_chart(stock_fig, xaxis_title=None, yaxis_title="Pezzi", margin=dict(l=0, r=8, t=8, b=8), height=288, legend=dict(orientation="h", y=-0.3)),
             width='stretch',
         )
         st.caption("Le scorte sono indicatori distinti: non vanno sommate automaticamente.")
