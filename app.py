@@ -5,9 +5,9 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from icons import icon
 
-# Importa dal motore di calcolo le funzioni usate dalla dashboard
+# Importa le icone e le funzioni usate dalla dashboard
+from icons import icon
 from model import evaluate, forecast, inventory, scenario
 
 # Variabili costanti
@@ -45,10 +45,10 @@ def fmt_it(value, decimals=0):
 
 
 # Creazione HTML di una scheda KPI (icona colorata + etichetta + valore + unità)
-def kpi_card(icon, color, label, value, unit=""):
+def kpi_card(icon_svg, color, label, value, unit=""):
     return (
         f'<div class="kpi-card">'
-        f'<div class="kpi-icon {color}">{icon}</div>'
+        f'<div class="kpi-icon {color}">{icon_svg}</div>'
         f'<div><div class="kpi-label">{label}</div>'
         f'<div class="kpi-value">{value}</div>'
         f'<div class="kpi-unit">{unit}</div></div>'
@@ -148,9 +148,9 @@ forecast_dates = pd.date_range(history["mese"].iloc[-1] + pd.offsets.MonthBegin(
 st.subheader(f"Risultati - {selected_product}")
 st.markdown(
     '<div class="kpi-grid">'
-    + kpi_card(icon("trophy", 24), "blue", "Metodo più preciso", best_method)
-    + kpi_card(icon("chart-column", 24), "blue", "Domanda media prevista", fmt_it(forecast_values.mean()), "pezzi/mese")
-    + kpi_card(icon("target", 24), "red", "Errore MAE", fmt_it(best_model_result["MAE"], 1), "pezzi")
+    + kpi_card(icon("trophy"), "blue", "Metodo più preciso", best_method)
+    + kpi_card(icon("chart-column"), "blue", "Domanda media prevista", fmt_it(forecast_values.mean()), "pezzi/mese")
+    + kpi_card(icon("target"), "red", "Errore MAE", fmt_it(best_model_result["MAE"], 1), "pezzi")
     + "</div>",
     unsafe_allow_html=True,
 )

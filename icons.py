@@ -20,8 +20,11 @@ _PATHS = {
 }
 
 
+# Restituisce l'SVG inline dell'icona richiesta
 def icon(name, size=24, stroke_width=2):
-    # Restituisce l'SVG inline dell'icona; il colore segue "color" del contenitore.
+    # Verifica se il "name" esiste
+    if name not in _PATHS:
+        raise ValueError(f"Icona sconosciuta: {name}. Disponibili: {', '.join(_PATHS)}")
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" '
         f'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{stroke_width}" '
