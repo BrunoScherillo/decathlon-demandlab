@@ -49,6 +49,7 @@ La dashboard permette di:
 - **Pandas e NumPy:** aiutano a leggere i dati e a fare i calcoli.
 - **Plotly:** mostra i risultati attraverso grafici.
 - **CSS:** definisce tutta la parte grafica dell'interfaccia.
+- **Lucide:** libreria di icone a linea (<https://lucide.dev>) tutte le icone dell'app provengono da qui.
 - **Pytest:** permette di eseguire alcuni controlli automatici sul codice.
 
 ## Come avviare la dashboard
@@ -114,8 +115,11 @@ decathlon-demandlab/
 ├── app.py                  # dashboard e gestione dei comandi
 ├── style.css               # stile grafico
 ├── model.py                # previsioni, errori e scorte
+├── icons.py                # icone
 ├── generate_data.py        # generazione dei dati di esempio
 ├── requirements.txt        # librerie da installare
+├── assets/
+│   └── favicon.png         # icona della scheda del browser
 ├── data/
 │   └── demand_history.csv  # dati mensili dei quattro prodotti
 ├── .streamlit/

@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+from icons import icon
 
 # Importa dal motore di calcolo le funzioni usate dalla dashboard
 from model import evaluate, forecast, inventory, scenario
@@ -18,7 +19,7 @@ GRID = "#eef2f8"
 BASE_DIR = Path(__file__).resolve().parent
 
 # Configura titolo, icona e disposizione della pagina web
-st.set_page_config(page_title="Decathlon DemandLab", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Decathlon DemandLab", page_icon=str(BASE_DIR / "assets" / "favicon.png"), layout="wide")
 
 @st.cache_data
 def load_css():
@@ -57,9 +58,9 @@ def kpi_card(icon, color, label, value, unit=""):
 
 # Blocco titolo + icona + descrizione
 st.markdown(
-    """
+    f"""
 <div class="app-header">
-  <div class="app-logo">📊</div>
+  <div class="app-logo">{icon("chart-column", 34)}</div>
   <div>
     <p class="app-title">Decathlon DemandLab</p>
     <p class="app-subtitle">Previsioni e scorte - Progetto didattico con dati sintetici, non vendite reali Decathlon</p>
@@ -114,7 +115,7 @@ demand_data = load_data()
 # Blocco barra laterale
 # Tutti i controlli sono raccolti nella barra laterale, per mantenere pulita la schermata
 with st.sidebar:
-    st.header("⚙️ Impostazioni")
+    st.markdown(f'<h2 class="side-title">{icon("settings-2", 20)}Impostazioni</h2>', unsafe_allow_html=True)
     selected_product = st.selectbox("Prodotto", sorted(demand_data["articolo"].unique()))
     st.markdown("**Domanda**")
     # I tre moltiplicatori valgono 1.0 nello scenario iniziale
@@ -147,9 +148,9 @@ forecast_dates = pd.date_range(history["mese"].iloc[-1] + pd.offsets.MonthBegin(
 st.subheader(f"Risultati - {selected_product}")
 st.markdown(
     '<div class="kpi-grid">'
-    + kpi_card("🏆", "blue", "Metodo più preciso", best_method)
-    + kpi_card("📊", "blue", "Domanda media prevista", fmt_it(forecast_values.mean()), "pezzi/mese")
-    + kpi_card("🎯", "red", "Errore MAE", fmt_it(best_model_result["MAE"], 1), "pezzi")
+    + kpi_card(icon("trophy", 24), "blue", "Metodo più preciso", best_method)
+    + kpi_card(icon("chart-column", 24), "blue", "Domanda media prevista", fmt_it(forecast_values.mean()), "pezzi/mese")
+    + kpi_card(icon("target", 24), "red", "Errore MAE", fmt_it(best_model_result["MAE"], 1), "pezzi")
     + "</div>",
     unsafe_allow_html=True,
 )
