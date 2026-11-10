@@ -56,13 +56,13 @@ La dashboard permette di:
 
 ### 1. Installare Python (se non è già presente)
 
-Serve **Python 3.10 o una versione successiva**. Per controllare se è già installato, aprire il terminale (su Windows: *Prompt dei comandi* o *PowerShell*) ed eseguire:
+Serve **Python dalla versione 3.11 alla 3.14**. Per controllare se è già installato, aprire il terminale (su Windows: *Prompt dei comandi* o *PowerShell*) ed eseguire:
 
 ```bash
 python --version
 ```
 
-Se compare un numero di versione pari o superiore a 3.10, si può passare al punto successivo. Altrimenti:
+Se compare un numero di versione compreso tra 3.11 e 3.14, si può passare al punto successivo. Altrimenti:
 
 - scaricare Python da <https://www.python.org/downloads/>;
 - **Windows:** nella prima schermata dell'installazione spuntare **"Add Python to PATH"** prima di cliccare su *Install Now*.
