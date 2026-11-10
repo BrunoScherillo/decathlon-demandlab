@@ -4,7 +4,7 @@
 
 Decathlon DemandLab è un progetto universitario realizzato con **Python** e **Streamlit**. Il suo scopo è mostrare come si può prevedere la richiesta di alcuni prodotti e come queste previsioni possono aiutare a organizzare le scorte di magazzino.
 
-> **Importante:** i dati utilizzati sono inventati e generati per questo esercizio. Non sono dati di vendita reali o ufficiali di Decathlon. L'azienda non partecipa al progetto.
+> **Importante:** i dati utilizzati sono stati inventati e generati per questo progetto, non sono dati di vendita reali o ufficiali di Decathlon.
 
 ---
 
