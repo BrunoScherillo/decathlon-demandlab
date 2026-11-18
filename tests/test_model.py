@@ -31,3 +31,16 @@ def test_baseline():
     s = np.arange(48.) + 100
     # np.allclose confronta i valori considerando piccole tolleranze numeriche
     assert np.allclose(scenario(s), s)
+
+# Verifica che il naive stagionale ripeta gli ultimi 12 mesi
+def test_forecast_seasonal():
+    s = np.tile(np.arange(10, 130, 10, dtype=float), 3)
+    result = forecast(s, 12, METHODS[3]) # METHODS[3] -> 'Naive stagionale'
+    assert np.allclose(result, s[-12:])
+
+
+# Verifica che i metodi siano ordinati per MAE crescente
+def test_evaluate_order():
+    s = np.arange(1, 49, dtype=float)
+    table, _ = evaluate(s)
+    assert table['MAE'].is_monotonic_increasing
